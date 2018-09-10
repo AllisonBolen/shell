@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <string.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 void parse(char* strInput, char** parsedInput);
 
@@ -11,14 +13,17 @@ int main(int argc, char* argv[])
 {
 	char input[256];
 	char* parsedInput[256];
+	struct rusage usage;
+	//long pSec = 0;
+	//long pUsec = 0;
+	//long pSwch = 0;
 	printf("$p2shell: ");
 	fgets(input, 256, stdin);
-	//printf("Before parsing: %s\n", input);
 	parse(input, parsedInput);
-	//printf("After Parsing: %s\n", parsedInput[0]);
 	while(strcmp(parsedInput[0], "exit") != 0){
 		int status, pid;
-		
+		//struct rusage usage;		
+
 		// make fork 
 		pid = fork();
 		if(pid < 0){
@@ -28,7 +33,15 @@ int main(int argc, char* argv[])
 		}
 		else if (pid){
 			waitpid(pid, &status, 0);
-	//		printf("we are the parent\n");
+		getrusage(RUSAGE_CHILDREN,&usage);
+		printf("\nCPU TIME USED BY CHILD: %ld.%08ld\n",usage.ru_utime.tv_sec,usage.ru_utime.tv_usec);
+		//pSec = usage.ru_utime.tv_sec;
+		//pUsec = usage.ru_utime.tv_usec;
+		
+		printf("\nINVOLUNTARY CONTEXT SWITCHES: %ld\n", usage.ru_nivcsw);
+
+		//pSwch = usage.ru_nivcsw;
+			
 		}
 		else {		
 			execvp(parsedInput[0], parsedInput);
