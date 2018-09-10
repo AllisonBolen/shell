@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 			waitpid(pid, &status, 0);
 	//		printf("we are the parent\n");
 		}
-		else {
+		else {		
 			execvp(parsedInput[0], parsedInput);
 			// grusage
 			exit(0);	
@@ -47,22 +47,20 @@ int main(int argc, char* argv[])
 // i want parsed int to be a passed by reference var so its changes here are saved to the original
 // This should return an array of arrays? words and \0s? for the comands used in exeve
 void parse(char * strInput, char** parsedInput)
-{
+{	
 	char *pos;
 	if((pos=strchr(strInput, '\n')) != NULL){
 		*pos = '\0';
 	}	
-
 	char * pch;
-	//printf ("Splitting string \"%s\" into tokens:\n",strInput);	
-	pch = strtok (strInput," ");
+	pch = strtok(strInput," ");
 	int count = 0;
   	while (pch != NULL)
-  	{	
-    	//	printf ("%s\n",pch);
+ 	{	
+    	//	printf ("*%s*\n",pch);
     		parsedInput[count] = pch;
     		pch = strtok (NULL, " ");
     		count++;
   	}
-	parsedInput[count+1]=NULL; 
+	parsedInput[count]=NULL;
 }
