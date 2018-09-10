@@ -5,12 +5,18 @@
 #include <sys/wait.h>
 #include <string.h>
 
+void parse(char* strInput, char** parsedInput);
+
 int main(int argc, char* argv[])
 {
 	char input[256];
+	char* parsedInput[256];
 	printf("$p2shell: ");
-	scanf("%s", input);
-	while(strcmp(input, "exit") != 0){
+	fgets(input, 256, stdin);
+	//printf("Before parsing: %s\n", input);
+	parse(input, parsedInput);
+	//printf("After Parsing: %s\n", parsedInput[0]);
+	while(strcmp(parsedInput[0], "exit") != 0){
 		int status, pid;
 		
 		// make fork 
@@ -22,21 +28,53 @@ int main(int argc, char* argv[])
 		}
 		else if (pid){
 			waitpid(pid, &status, 0);
-			printf("we are the child\n");
+	//		printf("we are the child\n");
 		}
 		else {
-		//	char* args[3];
-		//	args[0] = "ls";
-		//	args[1] = "\0";
-		//	execve(args[1], &args[1]);
-			printf("execute\n");
+		//	int i =0;
+	//		printf("We would like to execute %s with the parameters: ", parsedInput[0]);
+		//	for(i =1; i <3; i++){
+		//		printf("%s", parsedInput[1]);
+		//	}
+			/*char *cmd = "ls";
+			char *argd[3];
+			argd[0] = "ls";
+			argd[1] = "-a";
+			argd[2] = NULL;
+			execvp(cmd, argd);*/ 
+			execvp(parsedInput[0], parsedInput);
+			// call execute on the strace of the pid.
+			// grusage
 			exit(0);	
 		} 
 
 		printf("$p2shell: ");
-		scanf("%s", input);
-
+		fgets(input, 256, stdin);
+		parse(input, parsedInput);
 	}
 
 	return(0);
-}	
+}
+
+// i want parsed int to be a passed by reference var so its changes here are saved to the original
+// This should return an array of arrays? words and \0s? for the comands used in exeve
+void parse(char * strInput, char** parsedInput)
+{
+	char *pos;
+	if((pos=strchr(strInput, '\n')) != NULL){
+		*pos = '\0';
+	}	
+
+	char * pch;
+	//printf ("Splitting string \"%s\" into tokens:\n",strInput);	
+	pch = strtok (strInput," ");
+	int count = 0;
+  	while (pch != NULL)
+  	{	
+    	//	printf ("%s\n",pch);
+    		parsedInput[count] = pch;
+    		pch = strtok (NULL, " ");
+    		count++;
+  	}
+	parsedInput[count+1]=NULL; 
+}
