@@ -28,22 +28,10 @@ int main(int argc, char* argv[])
 		}
 		else if (pid){
 			waitpid(pid, &status, 0);
-	//		printf("we are the child\n");
+	//		printf("we are the parent\n");
 		}
 		else {
-		//	int i =0;
-	//		printf("We would like to execute %s with the parameters: ", parsedInput[0]);
-		//	for(i =1; i <3; i++){
-		//		printf("%s", parsedInput[1]);
-		//	}
-			/*char *cmd = "ls";
-			char *argd[3];
-			argd[0] = "ls";
-			argd[1] = "-a";
-			argd[2] = NULL;
-			execvp(cmd, argd);*/ 
 			execvp(parsedInput[0], parsedInput);
-			// call execute on the strace of the pid.
 			// grusage
 			exit(0);	
 		} 
