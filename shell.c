@@ -49,6 +49,16 @@ int main (int argc, char** argv) {
     return 0;
 }
 
+/**
+* This method parses the string and seperates
+* the main command from the parameters
+*/
 void command () {
-
+    int i = 0;
+    while (token != NULL) {
+        token = (NULL, " ");
+        //printf("%s\n", token);
+        counter[i] = token;
+        i++;
+    }
 }
