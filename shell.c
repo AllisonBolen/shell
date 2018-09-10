@@ -19,8 +19,11 @@ int main(int argc, char* argv[])
 	//long pSwch = 0;
 	printf("$p2shell: ");
 	fgets(input, 256, stdin);
+	while(input[0] =='\n' || input[0] == ' '){
+			fgets(input, 256, stdin);
+	}
 	parse(input, parsedInput);
-	while(strcmp(parsedInput[0], "exit") != 0){
+	while(strcmp(parsedInput[0], "quit") != 0){
 		int status, pid;
 		//struct rusage usage;		
 
@@ -33,24 +36,28 @@ int main(int argc, char* argv[])
 		}
 		else if (pid){
 			waitpid(pid, &status, 0);
-		getrusage(RUSAGE_CHILDREN,&usage);
-		printf("\nCPU TIME USED BY CHILD: %ld.%08ld\n",usage.ru_utime.tv_sec,usage.ru_utime.tv_usec);
-		//pSec = usage.ru_utime.tv_sec;
-		//pUsec = usage.ru_utime.tv_usec;
+			getrusage(RUSAGE_CHILDREN, &usage);
+			printf("\nCPU TIME USED BY CHILD: %ld.%08ld\n",usage.ru_utime.tv_sec,usage.ru_utime.tv_usec);
+			//pSec = usage.ru_utime.tv_sec;
+			//pUsec = usage.ru_utime.tv_usec;
 		
-		printf("\nINVOLUNTARY CONTEXT SWITCHES: %ld\n", usage.ru_nivcsw);
+			printf("\nINVOLUNTARY CONTEXT SWITCHES: %ld\n", usage.ru_nivcsw);
 
-		//pSwch = usage.ru_nivcsw;
+			//pSwch = usage.ru_nivcsw;
 			
 		}
 		else {		
 			execvp(parsedInput[0], parsedInput);
+			printf("Unkown command.");
 			// grusage
 			exit(0);	
 		} 
 
 		printf("$p2shell: ");
 		fgets(input, 256, stdin);
+		while(input[0] =='\n' || input[0] == ' '){
+			fgets(input, 256, stdin);
+		}
 		parse(input, parsedInput);
 	}
 
